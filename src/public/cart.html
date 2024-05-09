@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .cart-item {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item img {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+
+        .checkout-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shopping Cart</h1>
+
+        <div id="cart-container"></div>
+
+        <div class="cart-total">
+            <strong>Total:</strong> $<span id="total-price">0.00</span>
+        </div>
+
+        <button id="checkout-button" class="checkout-button">Checkout</button>
+    </div>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartContainer = document.getElementById('cart-container');
+        const totalPriceElement = document.getElementById('total-price');
+        let total = 0;
+
+        cart.forEach(product => {
+            const cartItem = document.createElement('div');
+            cartItem.classList.add('cart-item');
+
+            const productImage = document.createElement('img');
+            productImage.src = product.imageUrl;
+            productImage.alt = product.name;
+
+            const productName = document.createElement('h3');
+            productName.textContent = product.name;
+
+            const productPrice = document.createElement('p');
+            productPrice.textContent = `$${product.price}`;
+
+            cartItem.appendChild(productImage);
+            cartItem.appendChild(productName);
+            cartItem.appendChild(productPrice);
+
+            cartContainer.appendChild(cartItem);
+
+            total += product.price;
+        });
+
+        totalPriceElement.textContent = total.toFixed(2);
+
+        document.getElementById('checkout-button').addEventListener('click', () => {
+            alert('Redirecting to payment page...');
+            // Aquí puedes agregar la lógica para redirigir a la página de pago
+        });
+    </script>
+</body>
+</html>

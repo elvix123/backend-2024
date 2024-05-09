@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommerce</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .product {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product img {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+
+        .cart {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Products</h1>
+
+        <div id="products-container"></div>
+
+        <button id="cart-button" class="cart">Cart (0)</button>
+    </div>
+
+    <script>
+        function getCart() {
+            return JSON.parse(localStorage.getItem('cart')) || [];
+        }
+
+        function updateCartCounter() {
+            const cart = getCart();
+            const cartButton = document.getElementById('cart-button');
+            cartButton.textContent = `Cart (${cart.length})`;
+        }
+
+        document.getElementById('cart-button').addEventListener('click', () => {
+            window.location.href = '/cart';
+        });
+
+        fetch('http://localhost:4000/api/products')
+            .then(response => response.json())
+            .then(products => {
+                const productsContainer = document.getElementById('products-container');
+
+                products.forEach(product => {
+                    const productElement = document.createElement('div');
+                    productElement.classList.add('product');
+
+                    const productImage = document.createElement('img');
+                    productImage.src = product.imageUrl;
+                    productImage.alt = product.name;
+
+                    const productName = document.createElement('h3');
+                    productName.textContent = product.name;
+
+                    const productPrice = document.createElement('p');
+                    productPrice.textContent = `$${product.price}`;
+
+                    const addToCartButton = document.createElement('button');
+                    addToCartButton.textContent = 'Add to Cart';
+                    addToCartButton.addEventListener('click', () => {
+                        const cart = getCart();
+                        cart.push(product);
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                        updateCartCounter();
+                    });
+
+                    productElement.appendChild(productImage);
+                    productElement.appendChild(productName);
+                    productElement.appendChild(productPrice);
+                    productElement.appendChild(addToCartButton);
+
+                    productsContainer.appendChild(productElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching products:', error);
+            });
+    </script>
+</body>
+</html>
